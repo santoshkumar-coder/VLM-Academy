@@ -1,6 +1,7 @@
 import dotenv from 'dotenv'
 import dbConnect from './config/db.js';
 import userRoute from './route/userRoute.js';
+import teacherRoute from './route/teacherProfileRoute.js'
 
 
 dotenv.config()
@@ -21,6 +22,7 @@ app.get('/test', (req, res)=>{
 })
 
 app.use('/api/user', userRoute);
+app.use("/api/teacher", teacherRoute)
 
 
 
