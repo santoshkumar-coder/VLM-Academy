@@ -135,6 +135,66 @@ const userController = {
       });
     }
   },
+
+updateStudentProfile : async (req, res) => {
+    try {
+        const { userId } = req.params; // Or get it from req.user.id if using Auth middleware
+        const updates = req.body;
+
+        // 1. Prevent sensitive fields from being updated manually if necessary
+        delete updates.userId;
+        delete updates.createdAt;
+
+        const updatedProfile = await StudentProfile.findOneAndUpdate(
+            { userId: userId }, 
+            { $set: updates }, 
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedProfile) {
+            return res.status(404).json({ message: "Student profile not found." });
+        }
+
+        res.status(200).json({
+            message: "Profile updated successfully",
+            data: updatedProfile
+        });
+
+    } catch (error) {
+        res.status(500).json({ 
+            message: "Error updating profile", 
+            error: error.message 
+        });
+    }
+},
+
+
+deleteStudentProfile: async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedData = await StudentProfile.findByIdAndDelete(id);
+        if (!deletedData) {
+            return res.status(404).json({
+                success: false,
+                message: "Data not found!"
+            });
+        }
+        res.status(200).json({
+            success: true,
+            message: "Data deleted successfully"
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Error deleting data",
+            error: error.message
+        });
+    }
+}
+
 };
+
+ 
 
 export default userController;

@@ -1,18 +1,18 @@
 import mongoose from 'mongoose';
 
 const teacherProfileSchema = new mongoose.Schema({
-    dob:{
-        type:Date,
-        required: true
-    },
-    mobileNumber:{
-        type: String,
-        required: true,
-        trim : true
-    },
+    fullName: { type: String, required: true },
+    mobile: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    profilePhoto: { type: String }, 
+    pincode: { type: String },
+    city: { type: String },
+    state: { type: String },
+    address: { type: String },
+    dob: { type: Date },
+    gender: { type: String }
+}, { timestamps: true });
 
-
-})
-
-
-export default mongoose.model('TeacherProfile', teacherProfileSchema)
+const TeacherProfile = mongoose.model('TeacherProfile', teacherProfileSchema);
+export default TeacherProfile;
