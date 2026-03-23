@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import StudentProfile from "../model/studentProfile.js";
 import ErrorHandler from "../util/errorHandler.js";
 import catchAsyncError from "../middleware/catchAsyncError.js";
+import { createDoubtService } from "../service/askInstantDoubtService.js";
 
 const userController = {
   register: catchAsyncError(async (req, res, next) => {
@@ -164,6 +165,32 @@ const userController = {
         error: error.message,
       });
     }
+  },
+
+  askDoubt: async (req, res, next) => {
+    const studentId = req.userId;
+    const { subject, chapter, discrption, sessionType } = req.body;
+
+    const imageUrls = req.files?.map((file) => file.path) || [];
+
+    if (!studentId || !subject || !chapter || !discrption || !sessionType) {
+      return next(new ErrorHandler("All required fields are required", 400));
+    }
+
+    const doubt = await createDoubtService({
+      studentId,
+      subject,
+      chapter,
+      discrption,
+      sessionType,
+      image: imageUrls,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Doubt created successfully",
+      data: doubt,
+    });
   },
 };
 
