@@ -10,6 +10,6 @@ router.put("/edit-student/:userId", userController.updateStudentProfile);
 router.delete("/delete-student/:id", userController.deleteStudentProfile);
 
 
- router.post('/doubt', verifyToken, userController.postDoubt);
+// router.post('/doubt', verifyToken, userController.postDoubt);
 
 export default router;
