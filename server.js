@@ -2,7 +2,7 @@ import dotenv from 'dotenv'
 import dbConnect from './config/db.js';
 import userRoute from './route/userRoute.js';
 import teacherRoute from './route/teacherProfileRoute.js'
-
+import teacherQualificationRoute from './route/teacherQualification.route.js'
 
 dotenv.config()
 dbConnect();
@@ -22,7 +22,9 @@ app.get('/test', (req, res)=>{
 })
 
 app.use('/api/user', userRoute);
-app.use("/api/teacher", teacherRoute)
+app.use("/api/teacher", teacherRoute);
+
+app.use("/api/teacher-qualification", teacherQualificationRoute);
 
 
 

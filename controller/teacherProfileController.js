@@ -36,7 +36,7 @@ export const register = async (req, res) => {
 
         await newTeacher.save();
 
-        res.status(201).json({ message: "Teacher registered successfully!" });
+        res.status(201).json({ message: "Teacher registered successfully!" }, newTeacher);
 
     } catch (error) {
         res.status(500).json({ message: "Server Error", error: error.message });
