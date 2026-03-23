@@ -1,6 +1,12 @@
 import mongoose from 'mongoose';
 
 const teacherQualificationSchema = new mongoose.Schema({
+teacher: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'TeacherProfile',
+    required: true
+}
+    ,
     highestQualification: {
         type: String,
         required: [true, 'Highest qualification is required'],
@@ -49,9 +55,74 @@ const teacherQualificationSchema = new mongoose.Schema({
     resume: {
         type: String, 
         required: [true, 'Please upload your resume']
+    },
+    experience: {
+        type: String,
+        required: true
+    },
+
+    subjects: {
+        type: [String],
+        required: true
+    },
+
+    classes: {
+        type: [String],
+        required: true,
+        enum :['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
+    },
+    classCategories : {
+        type: [String], 
+        enum: ['Primary', 'Middle School', 'High School', 'Senior High'],
+        index : true
+    },
+
+    boards: {
+        type: [String],
+        required: true
+
+    },
+
+    languages : {
+        type: [String],
+        required: true
+    },
+    aadharCard: {
+        type: String,
+        trim: true
+    },
+    experienceDocument: {
+        type: String,
+        trim: true
+    },
+    qualificationCertificate: {
+        type: String,
+        trim: true
+    },
+    introVideo: {
+        type: String,
+        trim:  true
     }
+
 }, {
     timestamps: true
+});
+
+
+teacherQualificationSchema.pre('save', async function () {
+    if (this.isModified('classes') && Array.isArray(this.classes)) {
+        const categories = new Set();
+
+        this.classes.forEach(cls => {
+            const classNum = parseInt(cls);
+            if (classNum >= 1 && classNum <= 5) categories.add('Primary');
+            else if (classNum >= 6 && classNum <= 8) categories.add('Middle School');
+            else if (classNum >= 9 && classNum <= 10) categories.add('High School');
+            else if (classNum >= 11 && classNum <= 12) categories.add('Senior High');
+        });
+
+        this.classCategories = Array.from(categories);
+    }
 });
 
 const TeacherQualification = mongoose.model('TeacherQualification', teacherQualificationSchema);

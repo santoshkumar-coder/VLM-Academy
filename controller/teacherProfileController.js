@@ -2,7 +2,6 @@ import TeacherProfile from '../model/teacherProfile.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-// --- REGISTER TEACHER ---
 export const register = async (req, res) => {
     try {
         const { 
