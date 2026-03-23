@@ -7,34 +7,25 @@ const askInstantDoubtSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    stream: {
+    subject:{
+        type:String,
+        required:true
+    },
+    chapter:{
+        type:String,
+        required:true
+    },
+    discrption:{
+         type:String,
+        required:true
+    },
+    sessionType: {
         type: String,
         required: true
     },
-    language:{
-        type: String,
-        required: true
-    },
-    genderPrference:{
-        type: String,
-        enum:['male','female','other'],
-        default: 'other'
-    },
-    statePrference:{
-        type: String,
-        required: true
-    },
-    Title:{
-        type: String,
-        required: true
-    
-    },
-    Description:{
-        type: String,
-        required: true
-    },
+   
     image:{
-        type: String,
+        type: [String],
         
     },
     status:{
