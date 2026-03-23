@@ -7,6 +7,9 @@ router.post('/register', userController.register);
 router.post('/login', userController.login);
 router.get('/profile', verifyToken, userController.getProfile);
 router.put("/edit-student/:userId", userController.updateStudentProfile);
-router.delete("/delete-student/:id", userController.deleteStudentProfile)
+router.delete("/delete-student/:id", userController.deleteStudentProfile);
+
+
+ router.post('/doubt', verifyToken, userController.postDoubt);
 
 export default router;

@@ -1,4 +1,4 @@
-import TeacherProfile from '../model/TeacherProfile.js';
+import TeacherProfile from '../model/teacherProfile.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
