@@ -3,6 +3,7 @@ import dbConnect from './config/db.js';
 import userRoute from './route/userRoute.js';
 import teacherRoute from './route/teacherProfileRoute.js'
 import error from './middleware/error.js';
+import teacherQualificationRoute from './route/teacherQualification.route.js';
 
 dotenv.config()
 dbConnect();

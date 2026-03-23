@@ -112,36 +112,59 @@ const userController = {
     }
   },
 
-  updateStudentProfile: async (req, res) => {
-    try {
-      const { userId } = req.params; // Or get it from req.user.id if using Auth middleware
-      const updates = req.body;
+ updateStudentProfile :async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const updates = req.body;
 
-      // 1. Prevent sensitive fields from being updated manually if necessary
-      delete updates.userId;
-      delete updates.createdAt;
+    
+    const { name, gender, email, ...profileData } = updates;
 
-      const updatedProfile = await StudentProfile.findOneAndUpdate(
-        { userId: userId },
-        { $set: updates },
-        { new: true, runValidators: true },
+    const userUpdates = {};
+    if (name) userUpdates.name = name;
+    if (gender) userUpdates.gender = gender;
+    if (email) userUpdates.email = email;
+
+    delete profileData.userId;
+    delete profileData.createdAt;
+
+    let updatedUser;
+    if (Object.keys(userUpdates).length > 0) {
+      updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { $set: userUpdates },
+        { new: true, runValidators: true }
       );
-
-      if (!updatedProfile) {
-        return res.status(404).json({ message: "Student profile not found." });
+      
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found." });
       }
-
-      res.status(200).json({
-        message: "Profile updated successfully",
-        data: updatedProfile,
-      });
-    } catch (error) {
-      res.status(500).json({
-        message: "Error updating profile",
-        error: error.message,
-      });
     }
-  },
+
+    const updatedProfile = await StudentProfile.findOneAndUpdate(
+      { userId: userId },
+      { $set: profileData },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedProfile) {
+      return res.status(404).json({ message: "Student profile not found." });
+    }
+
+    res.status(200).json({
+      message: "Profile updated successfully",
+      data: {
+        user: updatedUser || "No changes in basic info",
+        profile: updatedProfile,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error updating profile",
+      error: error.message,
+    });
+  }
+},
 
   deleteStudentProfile: async (req, res) => {
     try {
