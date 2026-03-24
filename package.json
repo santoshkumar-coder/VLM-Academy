@@ -20,11 +20,7 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.3.0",
     "multer": "^2.1.1",
-<<<<<<< HEAD
-    "nodemon": "^3.1.14"
-=======
     "nodemon": "^3.1.14",
     "path": "^0.12.7"
->>>>>>> fa811a417c8937155505e1daf23b32fce6432ac2
   }
 }

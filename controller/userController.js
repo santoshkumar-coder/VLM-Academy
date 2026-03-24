@@ -113,59 +113,59 @@ const userController = {
     }
   },
 
- updateStudentProfile :async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const updates = req.body;
+  updateStudentProfile: async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const updates = req.body;
 
-    
-    const { name, gender, email, ...profileData } = updates;
 
-    const userUpdates = {};
-    if (name) userUpdates.name = name;
-    if (gender) userUpdates.gender = gender;
-    if (email) userUpdates.email = email;
+      const { name, gender, email, ...profileData } = updates;
 
-    delete profileData.userId;
-    delete profileData.createdAt;
+      const userUpdates = {};
+      if (name) userUpdates.name = name;
+      if (gender) userUpdates.gender = gender;
+      if (email) userUpdates.email = email;
 
-    let updatedUser;
-    if (Object.keys(userUpdates).length > 0) {
-      updatedUser = await User.findByIdAndUpdate(
-        userId,
-        { $set: userUpdates },
+      delete profileData.userId;
+      delete profileData.createdAt;
+
+      let updatedUser;
+      if (Object.keys(userUpdates).length > 0) {
+        updatedUser = await User.findByIdAndUpdate(
+          userId,
+          { $set: userUpdates },
+          { new: true, runValidators: true }
+        );
+
+        if (!updatedUser) {
+          return res.status(404).json({ message: "User not found." });
+        }
+      }
+
+      const updatedProfile = await StudentProfile.findOneAndUpdate(
+        { userId: userId },
+        { $set: profileData },
         { new: true, runValidators: true }
       );
-      
-      if (!updatedUser) {
-        return res.status(404).json({ message: "User not found." });
+
+      if (!updatedProfile) {
+        return res.status(404).json({ message: "Student profile not found." });
       }
+
+      res.status(200).json({
+        message: "Profile updated successfully",
+        data: {
+          user: updatedUser || "No changes in basic info",
+          profile: updatedProfile,
+        },
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: "Error updating profile",
+        error: error.message,
+      });
     }
-
-    const updatedProfile = await StudentProfile.findOneAndUpdate(
-      { userId: userId },
-      { $set: profileData },
-      { new: true, runValidators: true }
-    );
-
-    if (!updatedProfile) {
-      return res.status(404).json({ message: "Student profile not found." });
-    }
-
-    res.status(200).json({
-      message: "Profile updated successfully",
-      data: {
-        user: updatedUser || "No changes in basic info",
-        profile: updatedProfile,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "Error updating profile",
-      error: error.message,
-    });
-  }
-},
+  },
 
   deleteStudentProfile: async (req, res) => {
     try {
@@ -215,6 +215,7 @@ const userController = {
       data: doubt,
     });
   },
+
 };
 
 export default userController;

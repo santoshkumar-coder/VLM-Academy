@@ -1,8 +1,15 @@
 import express from 'express';
-import { scheduleInterview } from '../controller/interviewController.js';
+import { createSlot, deleteSlot, getAllSlots, updateSlot } from '../controller/interviewController.js';
+import { deleteModel } from 'mongoose';
 
 const router = express.Router();
 
-router.post("/create/:teacherId", scheduleInterview);
+router.post("/create", createSlot);
+
+router.get("/getAllSlots", getAllSlots);
+
+router.put("/update-slot", updateSlot );
+
+router.delete("/delete-slot", deleteSlot);
 
 export default router;

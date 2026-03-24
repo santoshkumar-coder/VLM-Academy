@@ -10,6 +10,7 @@ router.put("/edit-student/:userId", userController.updateStudentProfile);
 router.delete("/delete-student/:id", userController.deleteStudentProfile);
 
 
+
 router.post('/ask-doubt',verifyToken,upload.array("images", 6), userController.askDoubt )
 
 
