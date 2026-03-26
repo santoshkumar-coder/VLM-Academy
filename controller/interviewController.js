@@ -16,7 +16,6 @@ export const createSlot = async (req, res) => {
         // 2. Database mein User ko find karna aur uska role check karna
         const user = await User.findById(adminId);
 
-        // Check: Kya user exist karta hai aur kya uska role 'admin' hai?
         if (!user || user.role !== 'admin') {
             return res.status(403).json({ 
                 success: false, 
@@ -24,10 +23,8 @@ export const createSlot = async (req, res) => {
             });
         }
 
-        // 3. Agar admin hai, toh body se data nikalna
         const { date, day, times } = req.body; 
 
-        // 4. Validation: Times array check
         if (!times || !Array.isArray(times)) {
             return res.status(400).json({ message: "Invalid input: 'times' must be an array." });
         }
@@ -57,14 +54,10 @@ export const createSlot = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-// 2. Get All Slots (Admin View - Sab kuch dikhega)
 export const getAllSlots = async (req, res) => {
     try {
-        // 1. Database se saare slots fetch karna
-        // .populate() optional hai, agar admin ka naam dekhna ho toh rakhein
         const slots = await Slot.find().populate('createdBy', 'name email');
 
-        // 2. Response bhejna
         res.status(200).json({ 
             success: true, 
             totalSlots: slots.length,
@@ -79,24 +72,21 @@ export const getAllSlots = async (req, res) => {
         });
     }
 };
-// 3. Update Slot
+
+
 export const updateSlot = async (req, res) => {
     try {
-        // 1. adminId aur slotId dono URL query se nikalna (?adminId=...&slotId=...)
+
         const { adminId, slotId } = req.query;
-        
-        // 2. Naya data body se nikalna
         const { date, day, times } = req.body;
 
-        // 3. Validation: Kya dono IDs provide ki gayi hain?
         if (!adminId || !slotId) {
             return res.status(400).json({ 
                 success: false, 
                 message: "Both adminId and slotId are required in query parameters." 
             });
         }
-
-        // 4. Admin Verification: Kya ye user sach mein admin hai?
+       
         const user = await User.findById(adminId);
         if (!user || user.role !== 'admin') {
             return res.status(403).json({ 
@@ -105,7 +95,6 @@ export const updateSlot = async (req, res) => {
             });
         }
 
-        // 5. Update Data prepare karna
         const updateData = {};
         if (date) updateData.date = date;
         if (day) updateData.day = day;
@@ -113,11 +102,10 @@ export const updateSlot = async (req, res) => {
             if (!Array.isArray(times)) {
                 return res.status(400).json({ message: "Invalid input: 'times' must be an array." });
             }
-            // Naye times ko format karna
+         
             updateData.timeSlots = times.map(t => ({ time: t, isBooked: false }));
         }
 
-        // 6. Slot ko update karna (slotId ke base par)
         const updatedSlot = await Slot.findByIdAndUpdate(slotId, updateData, { new: true });
         
         if (!updatedSlot) {
@@ -134,7 +122,8 @@ export const updateSlot = async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 };
-// 4. Delete Slot
+
+
 export const deleteSlot = async (req, res) => {
     try {
   
@@ -173,6 +162,124 @@ export const deleteSlot = async (req, res) => {
             success: false, 
             message: "Server Error", 
             error: error.message 
+        });
+    }
+};
+
+
+
+export const getSlotsByFiltering = async (req, res) => {
+    try {
+        const { date, day } = req.query; 
+
+        let filter = { "timeSlots.isBooked": false };
+
+        if (date) {
+            filter.date = date;
+        }
+
+        if (day) {
+            filter.day = day;
+        }
+
+        const filteredSlots = await Slot.find(filter).select('date day timeSlots');
+
+        if (filteredSlots.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "No available slots found for the selected date/day."
+            });
+        }
+
+        const result = filteredSlots.map(slot => ({
+            slotId: slot._id,
+            date: slot.date,
+            day: slot.day,
+            availableTimings: slot.timeSlots
+                .filter(t => t.isBooked === false)
+                .map(t => t.time)
+        }));
+
+        res.status(200).json({
+            success: true,
+            totalFound: result.length,
+            slots: result
+        });
+
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+export const bookInterviewSlot = async (req, res) => {
+    try {
+        
+        const { teacherId, slotId } = req.query;
+       
+        const { selectedTime, date, day } = req.body;
+
+       
+        if (!teacherId || !slotId || !selectedTime || !date || !day) {
+            return res.status(400).json({ 
+                success: false, 
+                message: "Missing fields: teacherId, slotId, date, day, and selectedTime are required." 
+            });
+        }
+
+    
+        const teacher = await User.findById(teacherId);
+        if (!teacher || teacher.role !== 'teacher') {
+            return res.status(403).json({ 
+                success: false, 
+                message: "Access Denied: Only teachers can perform this action." 
+            });
+        }
+
+        const slot = await Slot.findOne({
+            _id: slotId,
+            date: date, 
+            day: day,   
+            "timeSlots": { $elemMatch: { time: selectedTime, isBooked: false } }
+        });
+
+        if (!slot) {
+            return res.status(404).json({
+                success: false,
+                message: "Slot not found or already booked for this specific Date/Day/Time."
+            });
+        }
+        const newBooking = new Booking({
+            slotId: slot._id,
+            teacherId: teacherId,
+            selectedTime: selectedTime,
+            status: 'Scheduled'
+            
+        });
+
+        await newBooking.save();
+
+        await Slot.updateOne(
+            { _id: slotId, "timeSlots.time": selectedTime },
+            { $set: { "timeSlots.$.isBooked": true } }
+        );
+
+        res.status(201).json({
+            success: true,
+            message: `Success! Interview scheduled for ${date} (${day}) at ${selectedTime}`,
+            bookingDetails: {
+                id: newBooking._id,
+                teacher: teacher.name,
+                date: date,
+                day: day,
+                time: selectedTime
+            }
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message
         });
     }
 };

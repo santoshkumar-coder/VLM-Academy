@@ -1,5 +1,5 @@
 import express from 'express';
-import { createQualification, getAllQualifications } from '../controller/teacherQualification.controller.js';
+import { createQualification, getAllQualifications, updateTeacherQualification } from '../controller/teacherQualification.controller.js';
 import { upload } from '../middleware/upload.js';
 
 const router = express.Router();
@@ -16,6 +16,8 @@ const uploadFields = upload.fields([
 
 
 router.post("/create/:teacherId", uploadFields, createQualification);
+
+router.put("/edit/:id", updateTeacherQualification)
 
 router.get("/get", getAllQualifications);
 

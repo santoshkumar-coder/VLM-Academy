@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const teacherQualificationSchema = new mongoose.Schema({
 teacher: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'TeacherProfile',
+    ref: 'User',
     required: true
 }
     ,

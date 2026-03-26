@@ -39,8 +39,10 @@ const userController = {
       gender,
       role,
     });
+  await user.save();
 
-    const studentProfile = await StudentProfile.create({
+  if(role === 'student') {
+ await StudentProfile.create({
       userId: user._id,
       schoolName,
       parentName,
@@ -49,9 +51,10 @@ const userController = {
       username,
       referralCode,
       class: studentClass,
-    });
+    })
+  };
 
-    await user.save();
+  
 
     res.status(201).json({
       success: true,
