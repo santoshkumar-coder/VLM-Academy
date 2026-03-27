@@ -11,9 +11,14 @@ router.delete("/delete-student/:id", userController.deleteStudentProfile);
 
 
 
-router.post('/ask-doubt',verifyToken,upload.array("images", 6), userController.askDoubt )
+router.post('/ask-doubt',verifyToken,upload.array("images", 6), userController.askDoubt );
+
+router.get('/dashboard',verifyToken, userController.getDashbaordData )
 
 
-// router.post('/doubt', verifyToken, userController.postDoubt);
+router.post('/doubt', verifyToken, userController.askDoubt);
+
+
+router.post('/markAsFavoriteTeacher',verifyToken, userController.markAsFavoriteTeacher)
 
 export default router;

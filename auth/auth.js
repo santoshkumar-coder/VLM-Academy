@@ -11,15 +11,13 @@ const verifyToken = (req, res, next) => {
         message: "No token provided"
       });
     }
-    console.log("authHeader:", authHeader); // Debugging log
-
-    // Bearer token
+  // Bearer token
     const token = authHeader.split(" ")[1];
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // attach user to request
-    req.userId = decoded.userId;
+    req.user = decoded.user;
    
     next();
 
