@@ -42,8 +42,10 @@ const userController = {
       gender,
       role,
     });
+  await user.save();
 
-    const studentProfile = await StudentProfile.create({
+  if(role === 'student') {
+ await StudentProfile.create({
       userId: user._id,
       schoolName,
       parentName,

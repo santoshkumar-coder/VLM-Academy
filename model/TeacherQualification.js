@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 
-const teacherQualificationSchema = new mongoose.Schema(
-  {
-    teacher: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "TeacherProfile",
-      required: true,
-    },
+const teacherQualificationSchema = new mongoose.Schema({
+teacher: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+}
+    ,
     highestQualification: {
       type: String,
       required: [true, "Highest qualification is required"],

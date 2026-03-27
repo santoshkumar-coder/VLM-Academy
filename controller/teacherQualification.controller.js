@@ -87,3 +87,41 @@ export const getAllQualifications = async (req, res) => {
         });
     }
 };
+
+export const updateTeacherQualification = async (req, res) => {
+    try {
+        const { id } = req.params; 
+        const updates = req.body;
+
+        const qualification = await TeacherQualification.findById(id);
+
+        if (!qualification) {
+            return res.status(404).json({ message: "Qualification record not found." });
+        }
+
+        Object.keys(updates).forEach((key) => {
+            qualification[key] = updates[key];
+        });
+
+        const updatedQualification = await qualification.save();
+
+        res.status(200).json({
+            message: "Qualification updated successfully!",
+            data: updatedQualification
+        });
+
+    } catch (error) {
+        console.error("Update Error:", error);
+
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(val => val.message);
+            return res.status(400).json({ message: "Validation Error", errors: messages });
+        }
+
+        if (error.kind === 'ObjectId') {
+            return res.status(400).json({ message: "Invalid Qualification ID format." });
+        }
+
+        res.status(500).json({ message: "Server Error", error: error.message });
+    }
+};
