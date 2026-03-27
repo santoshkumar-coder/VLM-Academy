@@ -64,7 +64,7 @@ const userController = {
       message: "User registered successfully",
       data: user,
     });
-  }),
+  }}),
 
   login: catchAsyncError(async (req, res, next) => {
     const { email, password } = req.body;
