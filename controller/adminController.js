@@ -1,7 +1,8 @@
 import User from "../model/user.js"; 
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
+import ErrorHandler from'../util/errorHandler.js';
+import catchAsyncError from "../middleware/catchAsyncError.js";
 
 // --- Admin Register ---
 export const registerAdmin = async (req, res) => {
@@ -104,3 +105,9 @@ export const loginAdmin = async (req, res) => {
         });
     }
 };
+
+export const updateTeacherProfileStatue = catchAsyncError(
+    async(req, res, next)=>{
+        // const adminID = await 
+
+})

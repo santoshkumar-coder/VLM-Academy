@@ -11,7 +11,12 @@ const teacherProfileSchema = new mongoose.Schema({
     state: { type: String },
     address: { type: String },
     dob: { type: Date },
-    gender: { type: String }
+    gender: { type: String },
+    status: {
+        type:String,
+        enum:["submitted", "approved", "rejected"],
+        default:"submitted"
+    }
 }, { timestamps: true });
 
 const TeacherProfile = mongoose.model('TeacherProfile', teacherProfileSchema);

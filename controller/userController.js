@@ -5,6 +5,8 @@ import StudentProfile from "../model/studentProfile.js";
 import ErrorHandler from "../util/errorHandler.js";
 import catchAsyncError from "../middleware/catchAsyncError.js";
 import { createDoubtService } from "../service/askInstantDoubtService.js";
+import { userDashboardService } from "../service/userService.js";
+import studentFavoriteTeacherSchema from "../model/favoriteTeacher.js";
 
 const userController = {
   register: catchAsyncError(async (req, res, next) => {
@@ -21,6 +23,7 @@ const userController = {
       username,
       referralCode,
       class: studentClass,
+      subject,
     } = req.body;
 
     const existingUser = await User.findOne({ email });
@@ -49,6 +52,7 @@ const userController = {
       username,
       referralCode,
       class: studentClass,
+      subject,
     });
 
     await user.save();
@@ -90,7 +94,8 @@ const userController = {
   }),
   getProfile: async (req, res) => {
     try {
-      const userId = req.userId;
+      const userId = req?.user?.userId
+      console.log(req)
       console.log("User ID from token:", userId);
       const user = await User.findById(userId).select("-password");
       const studentProfile = await StudentProfile.findOne({ userId });
@@ -118,7 +123,6 @@ const userController = {
       const { userId } = req.params;
       const updates = req.body;
 
-
       const { name, gender, email, ...profileData } = updates;
 
       const userUpdates = {};
@@ -134,7 +138,7 @@ const userController = {
         updatedUser = await User.findByIdAndUpdate(
           userId,
           { $set: userUpdates },
-          { new: true, runValidators: true }
+          { new: true, runValidators: true },
         );
 
         if (!updatedUser) {
@@ -145,7 +149,7 @@ const userController = {
       const updatedProfile = await StudentProfile.findOneAndUpdate(
         { userId: userId },
         { $set: profileData },
-        { new: true, runValidators: true }
+        { new: true, runValidators: true },
       );
 
       if (!updatedProfile) {
@@ -216,6 +220,37 @@ const userController = {
     });
   },
 
+  // dashboard personallise data
+  getDashbaordData: catchAsyncError(async (req, res, next) => {
+    const studentId = req.userId;
+    const data = await userDashboardService(studentId);
+    res.status(201).json({
+      success: true,
+      message: "User Dashboard data fetch successfully",
+      data: data,
+    });
+  }),
+
+  markAsFavoriteTeacher: catchAsyncError(async (req, res, next) => {
+    const studentId = req.userId;
+    const {teacherId} = req.body;
+
+    const result = await studentFavoriteTeacherSchema.findOneAndUpdate(
+      { studentId: studentId }, // find condition
+      {
+        $addToSet: { teachers: teacherId }, // avoids duplicates
+      },
+      {
+        new: true, // return updated document
+        upsert: true, // create if not exists
+      },
+    );
+    res.status(200).json({
+      success: true,
+      message: "Teacher added to favorites",
+      result
+    });
+  }),
 };
 
 export default userController;
