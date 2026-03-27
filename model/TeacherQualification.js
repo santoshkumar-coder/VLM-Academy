@@ -99,10 +99,12 @@ teacher: {
         type: String,
         trim: true
     },
-    introVideo: {
+    introVideo: { 
         type: String,
         trim:  true
     }
+
+    
 
 }, {
     timestamps: true

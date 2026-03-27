@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import User from "../model/user.js";
 import jwt from "jsonwebtoken";
 import StudentProfile from "../model/studentProfile.js";
-import ErrorHandler from "../util/errorHandler.js";
+import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncError from "../middleware/catchAsyncError.js";
 import { createDoubtService } from "../service/askInstantDoubtService.js";
 

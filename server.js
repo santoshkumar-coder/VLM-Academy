@@ -6,6 +6,8 @@ import error from './middleware/error.js';
 import teacherQualificationRoute from './route/teacherQualification.route.js';
 import adminRoutes from './route/adminRoutes.js';
 import interviewRoutes from './route/interviewRoutes.js'
+import { initCronJobs } from './utils/cronJobs.js';
+import teacherStatusRoutes from './route/status.routes.js';
 
 
 dotenv.config()
@@ -28,14 +30,15 @@ app.use('/api/user', userRoute);
 app.use("/api/teacher", teacherRoute);
 app.use("/api/teacher-qualification", teacherQualificationRoute);
 app.use("/api/admin", adminRoutes);
-app.use("/api/interview", interviewRoutes)
+app.use("/api/interview", interviewRoutes);
+app.use("/api/teacher-status", teacherStatusRoutes)
 app.use(error);
 
 
 
 
-
-
+ initCronJobs()
+ 
 
 app.listen(process.env.PORT ,()=>{
     console.log(`server is runing on port ${process.env.PORT} ...`)
