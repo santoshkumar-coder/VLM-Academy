@@ -13,11 +13,13 @@ const verifyToken = (req, res, next) => {
     }
   // Bearer token
     const token = authHeader.split(" ")[1];
+    console.log('token : ', token)
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // attach user to request
-    req.user = decoded.user;
+    console.log('decoded : ', decoded)
+    req.user = decoded;
    
     next();
 

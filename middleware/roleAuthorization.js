@@ -1,5 +1,6 @@
 const roleAuthorization = (allowedRoles) => {
     return (req, res, next) => {
+      console.log('req_user :', req.user)
       try {
         if (!allowedRoles.includes(req.user.role)) {
           return res

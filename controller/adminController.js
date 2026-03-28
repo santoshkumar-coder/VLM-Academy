@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import ErrorHandler from'../util/errorHandler.js';
 import catchAsyncError from "../middleware/catchAsyncError.js";
-
+import teacherProfileSchema from '../model/teacherProfile.js'
 // --- Admin Register ---
 export const registerAdmin = async (req, res) => {
     try {
@@ -108,6 +108,10 @@ export const loginAdmin = async (req, res) => {
 
 export const updateTeacherProfileStatue = catchAsyncError(
     async(req, res, next)=>{
-        // const adminID = await 
+        const {teacherId, status} = req.body;
+        const teacherProfile = await teacherProfileSchema.findOne({_id:teacherId})
+        console.log(teacherProfile)
+
+       
 
 })

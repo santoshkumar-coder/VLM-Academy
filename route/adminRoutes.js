@@ -8,6 +8,6 @@ router.post("/register", registerAdmin);
 
 router.post("/login", loginAdmin);
 
-router.patch('/profile-status-update', roleAuthorization("admin"),verifyToken, updateTeacherProfileStatue)
+router.patch('/profile-status-update',verifyToken, roleAuthorization("admin"), updateTeacherProfileStatue)
 
 export default router;
