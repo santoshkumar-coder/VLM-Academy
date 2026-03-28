@@ -98,35 +98,15 @@ teacher: {
       type: String,
       trim: true,
     },
-    introVideo: {
-      type: String,
-      trim: true,
-    },
-    status: {
-      type: String,
-      enum: ["submitted", "verfied", "rejected"],
-      default: "submitted",
-    },
-  },
-  {
-    timestamps: true,
-  },
-);
+    introVideo: { 
+        type: String,
+        trim:  true
+    }
 
-teacherQualificationSchema.pre("save", async function () {
-  if (this.isModified("classes") && Array.isArray(this.classes)) {
-    const categories = new Set();
+    
 
-    this.classes.forEach((cls) => {
-      const classNum = parseInt(cls);
-      if (classNum >= 1 && classNum <= 5) categories.add("Primary");
-      else if (classNum >= 6 && classNum <= 8) categories.add("Middle School");
-      else if (classNum >= 9 && classNum <= 10) categories.add("High School");
-      else if (classNum >= 11 && classNum <= 12) categories.add("Senior High");
-    });
-
-    this.classCategories = Array.from(categories);
-  }
+}, {
+    timestamps: true
 });
 
 const TeacherQualification = mongoose.model(

@@ -1,7 +1,7 @@
 import User from "../model/user.js"; 
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import ErrorHandler from'../util/errorHandler.js';
+import ErrorHandler from'../utils/errorHandler.js';
 import catchAsyncError from "../middleware/catchAsyncError.js";
 import teacherProfileSchema from '../model/teacherProfile.js'
 // --- Admin Register ---
